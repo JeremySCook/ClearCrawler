@@ -15,6 +15,9 @@
     RF24 radio(9, 10); // CE, CSN
     const byte address[6] = "00001";
     
+    //input variable setup
+    int buttonState = HIGH; //state input button
+
     void setup() {
       Serial.begin(9600);
 
@@ -33,7 +36,10 @@
       lc.shutdown(0,false);
       lc.setIntensity(0,2);
       lc.clearDisplay(0);
-      
+
+      //input setup
+      pinMode(0, INPUT_PULLUP); //button for when Tx/Rx not communicating
+
       //output setup
       pinMode(A0, OUTPUT); //activate motor IN1
       pinMode(A1, OUTPUT); //activate motor IN2
@@ -47,6 +53,15 @@
     void loop() {
       //LED
       lookCenter();
+      buttonState = digitalRead(0);
+
+      if (buttonState == LOW) {
+        headY.write(105);
+        forward();
+        delay(1000);
+        headY.write(85);
+        stopLegs();
+      }
       
       if (radio.available()) {
         char text[32] = "";
@@ -140,6 +155,7 @@
       digitalWrite(A1, LOW);
       digitalWrite(A2, HIGH);
       digitalWrite(A3, LOW);
+
     }
     void back(){
       Serial.println("Back");
@@ -147,6 +163,7 @@
       digitalWrite(A1, HIGH);
       digitalWrite(A2, LOW);
       digitalWrite(A3, HIGH);
+
     }
     void left(){
       Serial.println("Left");
@@ -161,6 +178,7 @@
       digitalWrite(A1, HIGH);
       digitalWrite(A2, HIGH);
       digitalWrite(A3, LOW);
+
     }
     void stopLegs(){
       Serial.println("Stop");
@@ -168,6 +186,7 @@
       digitalWrite(A1, LOW);
       digitalWrite(A2, LOW);
       digitalWrite(A3, LOW);
+
     }
 
  //LED routines
