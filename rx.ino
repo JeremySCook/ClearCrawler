@@ -23,6 +23,8 @@
 
       headX.attach(6);
       headY.attach(5);
+      headX.write(50);
+      headY.write(95);
       
       //radio setup
       radio.begin();
@@ -36,6 +38,7 @@
       lc.shutdown(0,false);
       lc.setIntensity(0,2);
       lc.clearDisplay(0);
+      lookCenter();
 
       //input setup
       pinMode(0, INPUT_PULLUP); //button for when Tx/Rx not communicating
@@ -51,16 +54,16 @@
       
     }
     void loop() {
-      //LED
-      lookCenter();
       buttonState = digitalRead(0);
 
       if (buttonState == LOW) {
+        lookBig();
         headY.write(105);
         forward();
         delay(1000);
-        headY.write(85);
+        headY.write(95);
         stopLegs();
+        lookCenter();
       }
       
       if (radio.available()) {
@@ -75,22 +78,27 @@
         }
         if(Data == "A") {
           forward();
+          lookCenter();
           Serial.println("A");
         }
         if(Data == "B") {
           right();
+          lookRight();
           Serial.println("B");
         }
         if(Data == "C") {
           back();
+          lookCenter();
           Serial.println("C");
         }
         if(Data == "D") {
           left();
+          lookLeft();
           Serial.println("D");
         }
         if(Data == "S") {
           stopLegs();
+          lookCenter();
           Serial.println("S");
         }
         if(Data == "J") {
@@ -151,6 +159,7 @@
 
     void forward(){
       Serial.println("Forward");
+      //lookCenter();
       digitalWrite(A0, HIGH);
       digitalWrite(A1, LOW);
       digitalWrite(A2, HIGH);
@@ -160,6 +169,7 @@
     void back(){
       Serial.println("Back");
       digitalWrite(A0, LOW);
+      //lookCenter();
       digitalWrite(A1, HIGH);
       digitalWrite(A2, LOW);
       digitalWrite(A3, HIGH);
@@ -167,6 +177,7 @@
     }
     void left(){
       Serial.println("Left");
+      //lookLeft();
       digitalWrite(A0, HIGH);
       digitalWrite(A1, LOW);
       digitalWrite(A2, LOW);
@@ -174,6 +185,7 @@
     }
     void right(){
       Serial.println("Right");
+      //lookRight();
       digitalWrite(A0, LOW);
       digitalWrite(A1, HIGH);
       digitalWrite(A2, HIGH);
@@ -182,6 +194,7 @@
     }
     void stopLegs(){
       Serial.println("Stop");
+      //lookCenter();
       digitalWrite(A0, LOW);
       digitalWrite(A1, LOW);
       digitalWrite(A2, LOW);
@@ -198,4 +211,28 @@
   lc.setColumn(0,4,B00110100);  
   lc.setColumn(0,5,B00111100);
   }
- 
+   void lookRight(){
+  //look right
+  lc.clearDisplay(0);
+  lc.setColumn(0,2,B01111000);
+  lc.setColumn(0,3,B01111000);
+  lc.setColumn(0,4,B01101000);  
+  lc.setColumn(0,5,B01111000);
+  }
+   void lookLeft(){
+  //look left
+  lc.clearDisplay(0);
+  lc.setColumn(0,2,B00011110);
+  lc.setColumn(0,3,B00011110);
+  lc.setColumn(0,4,B00011010);  
+  lc.setColumn(0,5,B00011110);
+  }
+  void lookBig(){
+  lc.clearDisplay(0);
+  lc.setColumn(0,1,B01111110);
+  lc.setColumn(0,2,B01111110);
+  lc.setColumn(0,3,B01110010);
+  lc.setColumn(0,4,B01110010);  
+  lc.setColumn(0,5,B01111110);
+  lc.setColumn(0,6,B01111110);
+  }
